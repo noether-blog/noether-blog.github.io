@@ -20,3 +20,5 @@ considérée par Einstein comme *Le génie mathématique créatif le plus consid
 depuis que les femmes ont eu accès aux études supérieures*
 
 Le blog est réalisé avec [Jekyll](https://jekyllrb.com/) et le thème [Chirpy](https://github.com/cotes2020/jekyll-theme-chirpy)
+
+Photo de profil par [@LaraAnCraite](https://twitter.com/LaraAnCraite)
