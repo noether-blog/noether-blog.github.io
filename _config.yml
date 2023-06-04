@@ -19,7 +19,7 @@ timezone: Europe/Paris
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Noether tech’ blog # the main title
+title: Noether tech blog # the main title
 
 tagline: Blog sur ma veille informatique # it will display as the sub-title
 
