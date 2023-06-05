@@ -109,6 +109,8 @@ se chargera alors de rediriger l'appel sur un des pods faisant tourner notre app
 
 ### Demo
 
+#### Présentation de notre application
+
 Pour notre exemple je vais prendre l'exemple d'une simple api python.
 
 - L'api écoute sur le port 8080 
@@ -178,11 +180,188 @@ Alors j'obtiens un `instance_id` différent
 
 On peut couper les conteneurs (`Ctrl + C` dans le terminal associé) si vous avez suivi mes commandes ils seront supprimés automatiquement
 
-Kubernetes étant un très gros logiciel, on ne peut pas directement travailler avec sans mettre son pc à genoux, 
-on va donc utiliser une version lite de celui-ci adapté pour desktop, j'ai nommé [k3s](https://k3s.io/), 
-rendez vous sur le site et suivez l'installation
+#### Mise en place de notre cluster kubernetes
 
-## Pourquoi on fait ça ?
+Kubernetes étant un très gros logiciel, on ne peut pas directement travailler avec sans mettre ses ressources pc à mal, 
+on va donc utiliser une version lite de celui-ci adapté pour desktop, j'ai nommé [k3s](https://k3s.io/), 
+rendez vous sur le site et suivez la procédure d'installation.
+
+Vous devez désormais avoir un service `k3s` qui tourne sur votre machine, vous devriez pouvoir le consulter via la commande suivante
+
+```bash
+sudo systemctl status k3s.service
+```
+
+Nous allons devoir modifier un petit peu le service k3s pour travailler avec afin qu'il soit capable de retrouver
+notre image docker de notre api python. Pour cela ouvrez le fichier suivant en tant qu'administrateur `/etc/systemd/system/k3s.service`
+
+À la dernière ligne, rajoutez `--docker` comme suit, vous indiquerez donc à k3s d'utiliser votre docker comme moteur de conteneur
+
+```txt
+ExecStart=/usr/local/bin/k3s \
+    server \
+    --docker
+```
+
+Pour redémarrer le service lancer les commandes suivantes
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart k3s.service
+```
+
+> Les commandes qui suivent sont à lancer avec `sudo`
+
+Une fois l'installation terminée on va créer un namespace `noether` dans lequer travailler
+
+```bash
+kubectl create namespace noether
+```
+
+> Un namespace est un cloisement interne à kube dans lequel on choisi de ranger nos applications, deux applications dans deux namespaces différents
+seront alors complètement isolée l'une de l'autre.
+
+#### Déploiement de notre application - Pod et Deployment
+
+Petit rappel de vocabulaire dans kubernetes notre application tourne dans un `pod` pour créer un pod kubernetes
+possède un objet nommé `deployment` qui est un descriptif de comment créer un pod que kubernete utilisera, 
+si nous souhaitons faire tourner notre application il faut donc créer un déploiement pour notre image docker.
+
+La commande suivante vous permettra de voir à quoi ressemble un `deployment`, le paramètre `--dry-run=client` indique à kube de ne rien opérer
+
+```bash
+kubectl create deployment py-sum-api --image=sum-api:v1.0.0 --dry-run=client -o yaml -n noether
+```
+
+Vous pouvez sauvegarder ce yaml en rajoutant `> manifest-deployment.yaml` à la suite de votre commande
+
+```bash
+kubectl create deployment py-sum-api --image=sum-api:v1.0.0 --dry-run=client -o yaml -n noether > manifest-deployment.yaml
+```
+
+Le manifest est disponible [ici](https://github.com/noether-blog/python-sum-api/blob/main/k3s/manifest-deployment.yaml) 
+
+Pour déployer notre application on a désormais deux commandes possibles
+
+```bash
+kubectl create deployment py-sum-api --image=sum-api:v1.0.0 -o yaml -n noether
+kubectl apply -f manifest-deployment.yaml
+```
+
+Une fois une de ces deux commandes lancées vous pouvez consulter votre déploiement et le pod qui a été créé à l'aide des deux commandes suivantes
+
+```bash
+kubectl get deployment -n noether # Va nous afficher la liste des déploiements
+kubectl get pods -n noether # Va nous afficher la liste des pods
+```
+
+> Si vous n'êtes pas à l'aise avec la ligne de commande je vous invite à regarder le logiciel [lens](https://k8slens.dev/)
+
+Ici notre déploiement n'a créé qu'un seul pod. Pour notre démo on aimerait en avoir deux
+
+Dans `manifest-deployment.yaml` nous allons nous intéresser au paramètre `spec.replicas`, ce paramètre va indiquer à kube combien de pods il doit créer
+
+```yaml
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+```
+
+On édite le manifest pour passer le nombre de replicas à deux et on apply de nouveau le manifest
+
+```bash
+kubectl apply -f manifest-deployment.yaml -n noether
+```
+
+> On aurait également pu utiliser la commande `kubectl edit deployment py-sum-api` pour faire l'édition en live
+
+Si vous relancez la commande `kubectl get pods -n noether` vous aurez alors un résultat similaire à celui-ci
+
+```txt
+NAME                          READY   STATUS    RESTARTS   AGE
+py-sum-api-5779b44f4b-65bxr   1/1     Running   0          87s
+py-sum-api-5779b44f4b-2bmm6   1/1     Running   0          45s
+```
+
+Nous aimerions désormais pouvoir accéder à ces pods via notre navigateur.
+
+#### Déploiement de notre application - Les Services
+
+Dans Kubernetes les pods sont complètements isolés du monde extérieur, et n'ont pas de possibilité 
+d'être appelé directement, d'autant plus que si c'était le cas, comment savoir lequel vous allez appelé ? 
+C'est là que les services entre en jeu.
+
+Le `service` est une entité kube qui (dixit la doc) définit un ensemble logique de pod ainsi que des règles pour y accéder.
+
+Le `service` se place donc devant l'ensemble de vos pods et se charge de dispatcher le traffic dessus selon des règles établies.
+
+Notre service comme un deployment peut être représenter par un manifest yaml, 
+on peut le consulter avec la commande suivante, comme précédemment le `--dry-run=client` ne vas pas exécuter la commande
+
+```bash
+kubectl expose deployment/py-sum-api --type="NodePort" --port 8080 --dry-run=client -o yaml -n noether
+```
+
+On peut donc sauvegarder ce manifest en rajoutant `> manifest-service.yaml` à la suite de la commande
+
+```bash
+kubectl expose deployment/py-sum-api --type="NodePort" --port 8080 --dry-run=client -o yaml -n noether > manifest-service.yaml
+```
+
+> Nous reviendrons sur le NodePort après.
+
+Vous pouvez donc désormais créer votre service avec la commande suivante
+
+```bash
+kubectl apply -f manifest-service.yaml -n noether
+```
+
+Vous pouvez désormais lister vos services avec la commande `kubectl get services -n noether` et vous aurez un résultat similaire à celui ci-dessous
+
+```txt
+NAME         TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+py-sum-api   NodePort   XX.YY.ZZ.ABC   <none>        8080:30784/TCP   3m2s
+```
+
+Si vous prenez la `Cluster-ip` de votre service et vous rendez dans votre navigateur sur l'url `http://xx.yy.zz.abc:8080/health`
+
+Vous obtiendrez le json suivant, correspondant au [endpoint](https://github.com/noether-blog/python-sum-api/blob/main/app.py#L14) `/health` de notre api python
+
+```json
+{
+  "status": "ok"
+}
+```
+
+Appelons désormais l'url suivante plusieurs fois `http://xx.yy.zz.abc:8080/api/v1/sum/15/7`
+
+De mon côté j'observe les deux résultats suivants
+
+```json
+{
+  "instance_id": "B6mG03Ptg9nbWylnf72d9uIMs",
+  "result": "22"
+}
+```
+```json
+{
+  "instance_id": "AcDk7Y8M3VA12keqaKWf90taz",
+  "result": "22"
+}
+```
+
+On constate que l'`instance_id` est différent c'est parque le service a dispatché l'appel http sur les deux pods.
+
+Je vous ai parlé du `NodePort` un service de type NodePort va exposer le port 8080 du noeuds sur lequel tournent les pods directement au monde extérieur.
+
+Ce n'est pas spécialement une bonne pratique que d'exposer tous les nodes de son cluster à l'extérieur, 
+on préféra utiliser des services de type `ClusterIP` rendant les pods accessibles uniquement depuis le cluster
+
+Pour exposer à l'extérieur vous aurez donc un seul service de type `NodePort` qui recevra tout le traffic en entrée pour le transmettre à un pod qui sera alors
+chargé de dispatcher le traffic à tous les autres services du cluster. On parle alors de ce pod comme étant un `ingress`.
+
+## Pourquoi fait on ça ?
 
 Pour une seule et unique raison ! Vos pods sont déployés sur plusieurs machines (appelées noeuds ou nodes)
 Cela vous permet donc plusieurs choses
@@ -219,3 +398,8 @@ C'en est fini pour cet article sur les orchestrateurs, j'espère qu'il vous aura
 le sujet et d'y voir un peu plus clair sur le fonctionnement de ces outils.
 
 L'exemple est centré sur kubernetes car c'est l'un des plus populaires, mais on retrouve le même principe sur les autres.
+
+
+## Source pour cet article
+
+[la documentation kubernetes](https://kubernetes.io/docs/home/)
