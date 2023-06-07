@@ -7,11 +7,11 @@ order: 4
 Anciennement développeur reconverti dans le domaine de l'ops depuis quelques années déjà,
 Cela fait à ce jour un peu plus de 10 ans que je travaille dans l'informatique.
 
-Ça faisait déjà quelques temps que je cherche une solution pour partager mes connaissances,
-je ne suis pas spécialement un grand fan des threads twitter, ça se perd trop facilement, 
-et je ne suis pas spécialement à l'aise pour m'afficher publiquement sur ces domaines la.
+Cela fait déjà quelques temps que je cherche une solution pour partager ma veille techno' et mes connaissances,
+n'étant pas spécialement un grand fan des threads twitter (ça se perd trop facilement)
+ni très à l'aise pour parler devant plein de gens sur ce genre de sujet, le blog était le meilleur compromis.
 
-Ce blog me permet donc de partager sous pseudonymat des articles sur des sujets tech' qui me tiennent à coeur.
+Ce blog me permet donc de partager sous pseudonymat des articles sur des sujets tech' qui me tiennent à cœur.
 
 Dans le cas où vous savez qui je suis (c'est pas bien compliqué à deviner), merci de garder ça pour vous :)
 
