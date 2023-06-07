@@ -110,5 +110,5 @@ Plusieurs logiciels permettent cela, les deux plus connu étant `nginx` et `htt
 
 ## Conclusion
 
-Je vous ai montré ici comment configurer vos hostnames et donc personnaliser vos environnements de travail, à vous de belles urls nommées en accord avec vos projets web, la seule limite est votre imagination!
+Je vous ai montré ici comment configurer vos hostnames et donc personnaliser vos environnements de travail, à vous de belles urls nommées en accord avec vos projets web, la seule limite est désormais votre imagination!
 
