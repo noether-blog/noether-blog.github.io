@@ -108,6 +108,7 @@ C --> G([localhost:3000])
 
 Plusieurs logiciels permettent cela, les deux plus connu étant `nginx` et `httpd` (connu également sous le nom `apache`). Ils ne sont pas bien compliqué à configurer mais nous verrons cela en détail dans un prochain article.
 
+## Conclusion
 
-
+Je vous ai montré ici comment configurer vos hostnames et donc personnaliser vos environnements de travail, à vous de belles urls nommées en accord avec vos projets web, la seule limite est votre imagination!
 
