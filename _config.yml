@@ -27,7 +27,7 @@ description: >- # used by seo meta and the atom feed
   Blog sur ma veille informatique
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
-url: ""
+url: "https://noether-blog.github.io"
 
 github:
   username: noether-blog
