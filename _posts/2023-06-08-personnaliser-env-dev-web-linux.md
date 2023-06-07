@@ -79,13 +79,12 @@ Ainsi si vous développez votre site sous un framework javascript quelconque et 
 
 ## Ok mais le port ?
 
-Alors oui vous l'avez vu dans la démo, changer le hosts implique de quand même devoir renseigner le port au moment de l'appel.
+Alors oui vous l'avez vu dans la démo, changer le hosts n’empêchera pas de devoir renseigner le port au moment de l'appel.
 
-Tout d'abord on ne se débarrassera jamais réellement du port, si vous avez 4 sites web + 2 apis, il vous faudra 6 ports.
+Sachez que l'on ne se débarrassera jamais réellement du port, si vous avez 4 sites web + 2 apis, il vous faudra 6 ports.
+Par défaut si aucun port n'est renseigné dans votre url au moment de l'appel, celui-ci sera envoyé sur le port 80.
 
-Mais! On peut le cacher, c'est un poil tricky à faire mais c'est faisable, et pour cela il nous faut un reverse proxy.
-
-Par défaut quand vous ne renseignez pas de port dans votre lien, c'est le port 80 qui sera appelé.
+Donc on ne peut pas se débarrasser des ports mais on peut les cacher, c'est un poil tricky à faire mais c'est possible, et pour cela il nous faut un reverse proxy.
 
 Un reverse proxy est un logiciel qui permet de capter du traffic entrant sur un seul port de votre machine pour ensuite le rediriger
 sur d'autre port de votre machine en fonction du hostname avec lequel il est appelé.
