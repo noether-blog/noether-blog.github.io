@@ -1,6 +1,6 @@
 ---
 author: froggy
-title: Personnaliser son environnement de dev web sous Linux
+title: Rien ne vaut un bon petit chez soit
 date: 2023-06-07 18:00:00 +0800
 categories: [Blogging, Web, Linux]
 tags: [web, nginx, linux]
@@ -9,22 +9,19 @@ comments: false
 mermaid: true
 ---
 
-*localhost* ! Toute personne ayant déjà développé un site web ou une api connaîtra ce mot, il représente le host par défaut de votre machine, l'ip 127.0.0.1 !
+*localhost* ! Toute personne ayant déjà développé un site web ou une api connaîtra ce mot, c'est notre hôte local, notre propre ordinateur, notre petit chez soit.
 
-Mais est ce que vous ne trouvez pas ça dommage ? 
+Mais pourquoi avoir à développer notre site sous un nom aussi générique que celui là! Ne méritons nous pas un peu plus de fantaisie 
+pour notre bel intérieur ?! Serait on condamné à avoir tout nos sites uniquement sous le nom localhost?!
 
-Je veux dire que l'ensemble de vos sites web sur votre machine soit tous sur localhost ? 
-
-Pourquoi un nom si fade et pas un peu de fantaisie ? Pourquoi devoir toujours renseigner le port derrière `localhost:8080` ?
-
-Dans cet article je vous montre comment personnaliser tout ça et pouvoir appeler votre site avec un hostname personnalisé.
+Et bien je vous dis non! Avec un peu de connaissance en ops et de magie sous linux / macOS je vous montre dans cet article comment personnaliser tout ça.
 
 ## C'est quoi un hostname ?
 
 Je ne suis pas le mieux placé pour vous parler de réseau mais je vais essayer de rester clair.
 
-Votre ordinateur est identifié est représenté par une ip, cette ip est différente en fonction de là où on se situe. 
-J'entends par là que votre ordinateur ainsi que celui sur lequel j'écris ces lignes se reconnaissent tout les deux par 127.0.0.1 et pourtant ce ne sont pas les mêmes machines.
+Votre ordinateur est identifié par une ip, cette ip est différente en fonction de là où on se situe. 
+J'entends par là que votre ordinateur ainsi que celui sur lequel j'écris ces lignes se reconnaissent tout les deux par l'ip 127.0.0.1 et pourtant ce ne sont pas les mêmes machines.
 
 Et des ips il en existe plein, et soyons réaliste si on devait toutes les retenir on ne s'en sortirait pas, on a donc eu besoin d'un meilleur système, les hostnames.
 
@@ -71,9 +68,14 @@ Ouvrez un terminal dans ce dossier et tapez la commande `python -m http.server 4
 Rendez vous sur `http://noether.blog.io:4200/` vous verrez alors notre `Hello World`
 
 Faites `Ctrl+C` dans vos terminaux pour couper les servers python.
+
 ---
 
 Ainsi en rajoutant des lignes dans votre fichier `/etc/hosts` vous pouvez définir des domaines personnalisés qui ne fonctionneront que sur votre environnement de travail, classe non ?
+
+> Sur certains OS, certaines terminaisons de domaines sont réservées, par exemple Manjaro ne vous laissera pas définir une url personnalisée en .local il faudra dans certains cas faire un peu preuve d'imagination
+
+Ainsi si vous développez votre site sous un framework javascript quelconque et que votre commande `serve` lance un petit server qui écoute sur le port 3000, vous pourrez accéder à votre site par le `localhost:3000` ou par `mon-host-perso.noether:3000` à condition de l'avoir renseigné dans `/etc/hosts` évidemment.
 
 ## Ok mais le port ?
 
@@ -103,9 +105,9 @@ C --> F([localhost:4200])
 C --> G([localhost:3000])
 ```
 
-*Sur ce schéma, le reverse proxy redirige le traffic entrant sur le port 8080 vers les ports 8080, 4200 et 3000*
+*Sur ce schéma, le reverse proxy redirige le traffic entrant sur le port 80 vers les ports 8080, 4200 et 3000*
 
-Plusieurs logiciels permettent cela, les deux plus connu étant `nginx` et `httpd` (connu également sous le nom `apache`). Ils ne sont pas bien compliqué à configurer mais cela peut prendre un peu de temps et fera l'objet d'un article dédié.
+Plusieurs logiciels permettent cela, les deux plus connu étant `nginx` et `httpd` (connu également sous le nom `apache`). Ils ne sont pas bien compliqué à configurer mais nous verrons cela en détail dans un prochain article.
 
 
 
