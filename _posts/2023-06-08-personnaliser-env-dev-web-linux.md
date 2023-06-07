@@ -11,10 +11,10 @@ mermaid: true
 
 *localhost* ! Toute personne ayant déjà développé un site web ou une api connaîtra ce mot, c'est notre hôte local, notre propre ordinateur, notre petit chez soit.
 
-Mais pourquoi avoir à développer notre site sous un nom aussi générique que celui là! Ne méritons nous pas un peu plus de fantaisie 
+Mais pourquoi avoir à développer notre site sous un nom aussi générique que celui là ?! Ne méritons nous pas un peu plus de fantaisie 
 pour notre bel intérieur ?! Serait on condamné à avoir tout nos sites uniquement sous le nom localhost?!
 
-Et bien je vous dis non! Avec un peu de connaissance en ops et de magie sous linux / macOS je vous montre dans cet article comment personnaliser tout ça.
+Et bien je vous dis non! Avec un peu de connaissance en ops et d’administration sous linux / macOS je vous montre dans cet article comment personnaliser tout ça.
 
 ## C'est quoi un hostname ?
 
@@ -50,13 +50,13 @@ ff02::2	ip6-allrouters
 Seule la première ligne nous intéresse, celle-ci nous permet de dire à notre ordinateur 
 que lorsque nous appelons `localhost` il doit nous rediriger sur l'ip `127.0.0.1`
 
-Si maintenant vous décider de rajouter une ligne dans `/etc/hosts` (il faut l'ouvrir en admin)
+Si maintenant vous décidez de rajouter une ligne dans `/etc/hosts` (il faut l'ouvrir en admin)
 
 ```
 127.0.0.1 noether.blog.io
 ```
 
-Et que vous rentrez l'url `http://noether.blog.io/` dans votre navigateur, et viens vous serez redirigé sur l'ip `127.0.0.1` 
+Et que vous renseignez l'url `http://noether.blog.io/` dans votre navigateur, vous serez alors redirigé sur l'ip `127.0.0.1` 
 
 ---
 ### Démo
